@@ -13,7 +13,7 @@ A Go client library for the Sleeper Fantasy Football API.
 ## Installation
 
 ```bash
-go get github.com/dsheehan167/tacowire/go-sleeper
+go get github.com/dsheehan167/go-sleeper
 ```
 
 ## Usage
