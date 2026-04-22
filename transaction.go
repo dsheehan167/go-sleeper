@@ -10,7 +10,7 @@ const (
 
 // Transaction represents a transaction in a league
 type Transaction struct {
-	Type          string               `json:"type,omitempty"`
+	Type          transactionType      `json:"type,omitempty"`
 	TransactionID string               `json:"transaction_id,omitempty"`
 	StatusUpdated int64                `json:"status_updated,omitempty"`
 	Status        string               `json:"status,omitempty"`

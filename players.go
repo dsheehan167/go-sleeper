@@ -2,12 +2,11 @@ package sleeper
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
+	"fmt"
 	"strconv"
 	"strings"
-
-	"encoding/json"
-	"fmt"
 )
 
 type trendingType string
@@ -129,7 +128,7 @@ func (c *Client) ListTrendingPlayers(ctx context.Context, sport sport, trendingT
 		errs = append(errs, fmt.Sprintf("invalid options: %v", err))
 	}
 	if len(errs) > 0 {
-		return nil, errors.New("invalid request:\n" + fmt.Sprintf("%s", errs))
+		return nil, fmt.Errorf("invalid request: %s", strings.Join(errs, "\n"))
 	}
 
 	endpoint := c.buildEndpoint(endpointTrendingPlayers, sport, trendingType)
