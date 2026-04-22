@@ -1,19 +1,16 @@
 # go-sleeper
 
-A Go client library for the Sleeper Fantasy Football API.
+A Go client library for the [Sleeper](https://sleeper.com) fantasy sports API.
 
 ## Features
 
-- Full support for Sleeper's public API endpoints (leagues, users, drafts, players, transactions, rosters, avatars, and more)
-- Rate limiting to avoid IP blocking (per Sleeper API guidelines)
-- Structs and methods closely matching Sleeper's API documentation
-- Simple, idiomatic Go interface
-- Well-documented code and function comments
+- Full coverage of Sleeper's public API (leagues, users, drafts, players, transactions, rosters, avatars, sport state)
+- Built-in rate limiter to stay within Sleeper's API guidelines
 
 ## Installation
 
 ```bash
-go get github.com/dsheehan167/tacowire/go-sleeper
+go get github.com/dsheehan167/go-sleeper
 ```
 
 ## Usage
@@ -24,51 +21,77 @@ package main
 import (
 	"context"
 	"fmt"
-	"github.com/dsheehan167/tacowire/go-sleeper"
+	sleeper "github.com/dsheehan167/go-sleeper"
 )
 
 func main() {
-	client, err := sleeper.NewClient(context.Background(), sleeper.Config{})
+	ctx := context.Background()
+
+	client, err := sleeper.NewClient(ctx, sleeper.Config{})
 	if err != nil {
 		panic(err)
 	}
 
-	// Example: Get a user by username or user_id
-	user, err := client.GetUser(context.Background(), "username_or_userid")
+	user, err := client.GetUser(ctx, "my_username")
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println(user)
+	fmt.Println(user.DisplayName)
+
+	leagues, err := client.GetUserLeagues(ctx, user.UserID, sleeper.SportNFL, "2024")
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(len(leagues), "leagues")
 }
 ```
 
+## Configuration
+
+All fields are optional — zero values use the defaults shown below.
+
+```go
+client, err := sleeper.NewClient(ctx, sleeper.Config{
+	APIVersion:   sleeper.APIVersion1, // default: v1
+	Timeout:      10 * time.Second,    // default: 30s
+	RateLimitRPS: 10,                  // default: 15 requests/sec
+	RateLimitBurst: 20,                // default: burst of 30
+})
+```
+
+Per Sleeper's documentation, staying under 1000 requests per minute avoids IP blocks. The default rate limiter (15 RPS, burst 30) is well within that limit.
+
 ## API Coverage
 
-- Users: Get user, get user leagues
-- Leagues: Get league, rosters, users, matchups, transactions, traded picks, brackets
-- Drafts: Get draft, user drafts, league drafts, picks, traded picks
-- Players: List all NFL players, trending players
-- Rosters: Get roster details
-- Transactions: Get transaction details
-- Avatars: Download avatar images and thumbnails
-- Sport State: Get current state for supported sports
+| Area | Methods |
+|------|---------|
+| Users | `GetUser`, `GetUserLeagues` |
+| Leagues | `GetLeague`, `GetLeagueRosters`, `GetLeagueUsers`, `GetLeagueMatchups`, `GetTransactions`, `GetLeagueTradedPicks`, `GetLeagueWinnersBracket`, `GetLeagueLosersBracket` |
+| Drafts | `GetDraft`, `GetUserDrafts`, `GetLeagueDrafts`, `GetDraftPicks`, `GetDraftTradedPicks` |
+| Players | `ListNFLPlayers`, `ListTrendingPlayers` |
+| Avatars | `GetAvatarImage`, `GetAvatarThumbnail` |
+| Sport State | `GetSportState` |
 
-## Rate Limiting
+Supported sports: `SportNFL`, `SportNBA`, `SportMLB`, `SportNHL`.
 
-The client includes a rate limiter to help prevent exceeding Sleeper's API limits. Per Sleeper's documentation, you should stay under 1000 API calls per minute to avoid being IP-blocked.
+## NFL Players
+
+`ListNFLPlayers` returns the full player map (~5 MB). Sleeper recommends calling this **at most once per day** and caching the result on your own server rather than fetching it per-request.
 
 ## Trending Players Widget
 
-To embed the official trending players list in your app or website, use the following HTML snippet provided by Sleeper:
+To embed Sleeper's official trending list in a web page:
 
 ```html
 <iframe src="https://sleeper.app/embed/players/nfl/trending/add?lookback_hours=24&limit=25" width="350" height="500" allowtransparency="true" frameborder="0"></iframe>
 ```
 
+Please give attribution to Sleeper if you use their trending data.
+
 ## Documentation
 
-- [Sleeper API Docs](https://docs.sleeper.com/)
-- See GoDoc comments in the code for details on each method and struct.
+- [Sleeper API docs](https://docs.sleeper.com/)
+- GoDoc comments on every exported type and method
 
 ## License
 
