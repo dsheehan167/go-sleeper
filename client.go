@@ -49,7 +49,7 @@ func NewClient(ctx context.Context, config Config) (*Client, error) {
 
 	config.setDefaults()
 	client := &http.Client{
-		Timeout: config.Timeout * time.Second,
+		Timeout: config.Timeout,
 	}
 
 	limit := rate.Every(time.Second / time.Duration(config.RateLimitRPS))

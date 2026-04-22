@@ -19,8 +19,8 @@ func (e *APIError) Error() string {
 }
 
 func (c *Client) getRequest(ctx context.Context, endpoint string) ([]byte, error) {
-	if c == nil || c.client == nil {
-		return nil, errors.New("http client cannot be nil")
+	if c.client == nil {
+		return nil, errors.New("http client is not initialised")
 	}
 
 	// Wait for rate limiter
