@@ -70,7 +70,7 @@ func TestUser_GetLeagues(t *testing.T) {
 		testcase   string
 		userID     string
 		season     string
-		sport      sport
+		sport      Sport
 		shouldPass bool
 	}{
 		{
