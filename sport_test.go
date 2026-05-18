@@ -8,7 +8,7 @@ import (
 func TestSportState_Get(t *testing.T) {
 	tt := []struct {
 		testcase   string
-		sport      sport
+		sport      Sport
 		shouldPass bool
 	}{
 		{

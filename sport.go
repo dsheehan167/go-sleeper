@@ -7,13 +7,13 @@ import (
 	"fmt"
 )
 
-type sport string
+type Sport string
 
 const (
-	SportNFL sport = "nfl"
-	SportMLB sport = "mlb"
-	SportNBA sport = "nba"
-	SportNHL sport = "nhl"
+	SportNFL Sport = "nfl"
+	SportMLB Sport = "mlb"
+	SportNBA Sport = "nba"
+	SportNHL Sport = "nhl"
 )
 
 type SportState struct {
@@ -28,7 +28,7 @@ type SportState struct {
 	DisplayWeek        int            `json:"display_week,omitempty"`         // Which week to display in UI, can be different than week
 }
 
-func (c *Client) GetSportState(ctx context.Context, sport sport) (*SportState, error) {
+func (c *Client) GetSportState(ctx context.Context, sport Sport) (*SportState, error) {
 	if sport == "" {
 		return nil, errors.New("sport is required")
 	}

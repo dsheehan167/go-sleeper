@@ -134,7 +134,7 @@ func (c *Client) GetDraft(ctx context.Context, draftID string) (*Draft, error) {
 
 // GetUserDrafts retrieves all drafts for a given user, sport, and season from the Sleeper API.
 // See: https://docs.sleeper.com/#get-user-drafts
-func (c *Client) GetUserDrafts(ctx context.Context, userID string, sport sport, season string) ([]*Draft, error) {
+func (c *Client) GetUserDrafts(ctx context.Context, userID string, sport Sport, season string) ([]*Draft, error) {
 	userID = strings.TrimSpace(userID)
 	season = strings.TrimSpace(season)
 	var errs []string

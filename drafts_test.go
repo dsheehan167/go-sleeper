@@ -68,7 +68,7 @@ func TestDraft_UserDrafts(t *testing.T) {
 	tt := []struct {
 		testcase   string
 		userID     string
-		sport      sport
+		sport      Sport
 		season     string
 		shouldPass bool
 	}{

@@ -44,7 +44,7 @@ func (c *Client) GetUser(ctx context.Context, identity string) (*User, error) {
 }
 
 // GetUserLeagues retrieves all leagues for a user is a member of for a given user id (must be the user_id, cannot be the username), sport, and season (season should be the year, e.g. 2025).
-func (c *Client) GetUserLeagues(ctx context.Context, userID string, sport sport, season string) ([]*League, error) {
+func (c *Client) GetUserLeagues(ctx context.Context, userID string, sport Sport, season string) ([]*League, error) {
 
 	var errs []string
 	userID = strings.TrimSpace(userID)

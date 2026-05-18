@@ -46,8 +46,8 @@ func TestPlayer_List(t *testing.T) {
 func TestPlayer_ListTrending(t *testing.T) {
 	tt := []struct {
 		testcase     string
-		sport        sport
-		trendingType trendingType
+		sport        Sport
+		trendingType TrendingType
 		options      TrendingPlayerOptions
 		shouldPass   bool
 	}{

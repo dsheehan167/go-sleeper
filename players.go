@@ -9,11 +9,11 @@ import (
 	"strings"
 )
 
-type trendingType string
+type TrendingType string
 
 const (
-	TrendingTypeAdd  trendingType = "add"
-	TrendingTypeDrop trendingType = "drop"
+	TrendingTypeAdd  TrendingType = "add"
+	TrendingTypeDrop TrendingType = "drop"
 )
 
 // Player represents a player in the Sleeper system
@@ -116,7 +116,7 @@ func (c *Client) ListNFLPlayers(ctx context.Context) (map[string]Player, error) 
 // If you wish to embed the official trending list in your app or website, use the following HTML snippet provided by Sleeper:
 //
 // <iframe src="https://sleeper.app/embed/players/nfl/trending/add?lookback_hours=24&limit=25" width="350" height="500" allowtransparency="true" frameborder="0"></iframe>
-func (c *Client) ListTrendingPlayers(ctx context.Context, sport sport, trendingType trendingType, options TrendingPlayerOptions) ([]*Player, error) {
+func (c *Client) ListTrendingPlayers(ctx context.Context, sport Sport, trendingType TrendingType, options TrendingPlayerOptions) ([]*Player, error) {
 	var errs []string
 	if sport == "" {
 		errs = append(errs, "sport is required")
