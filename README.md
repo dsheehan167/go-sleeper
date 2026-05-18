@@ -93,6 +93,17 @@ Please give attribution to Sleeper if you use their trending data.
 - [Sleeper API docs](https://docs.sleeper.com/)
 - GoDoc comments on every exported type and method
 
+## Contributing
+
+This repo uses [Conventional Commits](https://www.conventionalcommits.org/). Commit subjects on `main` should start with one of:
+
+- `feat:` — new functionality (minor bump pre-1.0, would be minor post-1.0)
+- `fix:` — bug fix (patch bump)
+- `feat!:` / `fix!:` or `BREAKING CHANGE:` in body — breaking change (major bump, or minor pre-1.0)
+- `chore:` / `docs:` / `refactor:` / `test:` / `ci:` — no release
+
+[release-please](https://github.com/googleapis/release-please) watches `main` and opens a release PR that bumps the version, updates `CHANGELOG.md`, and creates a git tag (e.g. `v0.2.0`) when merged. Tags are what `go get` consumes.
+
 ## License
 
 MIT
