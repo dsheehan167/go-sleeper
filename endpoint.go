@@ -25,6 +25,14 @@ const (
 	endpointNFLPlayers      = "/players/nfl"
 	endpointTrendingPlayers = "/players/%s/trending/%s"
 
+	// Hidden endpoints not listed in the Sleeper API docs. They live on a
+	// different host (api.sleeper.com) with no version prefix, so they bypass
+	// Client.baseURL. For player values, "regular" is the only season type
+	// observed to return data.
+	endpointHiddenBaseURL = "https://api.sleeper.com"
+	endpointPlayerValues  = "/players/%s/values/regular/%s/%s"
+	endpointProjections   = "/projections/%s/%s"
+
 	endpointDraft            = "/draft/%s"
 	endpointUserDrafts       = "/user/%s/drafts/%s/%s"
 	endpointLeagueDrafts     = "/league/%s/drafts"
@@ -34,6 +42,11 @@ const (
 	// Query parameters
 	queryParamLookbackHours = "lookback_hours"
 	queryParamLimit         = "limit"
+	queryParamIDP           = "idp"
+	queryParamIsDynasty     = "is_dynasty"
+	queryParamSeasonType    = "season_type"
+	queryParamOrderBy       = "order_by"
+	queryParamPosition      = "position[]"
 )
 
 func (c *Client) buildEndpoint(template string, args ...interface{}) string {
