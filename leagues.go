@@ -68,6 +68,9 @@ type ScoringSettings struct {
 	FGMiss       float64 `json:"fgmiss,omitempty"`
 	FF           float64 `json:"ff,omitempty"`
 	Rec          float64 `json:"rec,omitempty"`
+	BonusRecRB   float64 `json:"bonus_rec_rb,omitempty"`
+	BonusRecTE   float64 `json:"bonus_rec_te,omitempty"` // per-reception TE bonus; > 0 marks a TE-premium league
+	BonusRecWR   float64 `json:"bonus_rec_wr,omitempty"`
 	PtsAllow1420 float64 `json:"pts_allow_14_20,omitempty"`
 	FGM019       float64 `json:"fgm_0_19,omitempty"`
 	DefKrTd      float64 `json:"def_kr_td,omitempty"`
