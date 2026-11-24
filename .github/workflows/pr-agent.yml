@@ -1,0 +1,36 @@
+name: PR Agent
+
+on:
+  pull_request:
+    types: [opened, reopened, ready_for_review]
+  issue_comment:
+    types: [created]
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
+
+jobs:
+  pr-agent:
+    name: PR Agent
+    # Skip bot events, and only handle comments made on pull requests (not plain issues).
+    if: ${{ github.event.sender.type != 'Bot' && (github.event_name == 'pull_request' || github.event.issue.pull_request) }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - uses: the-pr-agent/pr-agent@v0.50.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+          # Model (Anthropic Claude via LiteLLM)
+          config.model: "anthropic/claude-opus-5-5"
+          config.fallback_models: '["anthropic/claude-sonnet-5-5"]'
+          ANTHROPIC.KEY: ${{ secrets.ANTHROPIC_KEY }}
+
+          # Run review and describe automatically; /improve stays on-demand via comments
+          github_action_config.auto_review: "true"
+          github_action_config.auto_describe: "true"
+          github_action_config.auto_improve: "false"
+          github_action_config.pr_actions: '["opened", "reopened", "ready_for_review"]'
