@@ -259,7 +259,6 @@ func (c *Client) GetLeagueUsers(ctx context.Context, leagueID string) ([]*User, 
 
 // GetLeagueMatchups retrieves all matchups for a given league ID and week.
 func (c *Client) GetLeagueMatchups(ctx context.Context, leagueID string, week int) ([]*Matchup, error) {
-
 	var errs []string
 	leagueID = strings.TrimSpace(leagueID)
 	if leagueID == "" {

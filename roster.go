@@ -66,8 +66,8 @@ func (rm *RosterMetadata) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("unmarshalling roster metadata: %w", err)
 	}
 
-	// Use map[string]interface{} to handle any value type
-	var raw map[string]interface{}
+	// Use map[string]any to handle any value type
+	var raw map[string]any
 	if err := json.Unmarshal(data, &raw); err != nil {
 		return fmt.Errorf("unmarshalling raw roster metadata: %w", err)
 	}
