@@ -83,7 +83,10 @@ jobs:
       cancel-in-progress: false
 
     steps:
-      - uses: the-pr-agent/pr-agent@v0.50.0
+      # Pinned by digest: the-pr-agent/pr-agent@<tag> only pins a wrapper whose Dockerfile
+      # pulls the rolling pragent/pr-agent:github_action image. To upgrade, resolve the new digest:
+      #   docker buildx imagetools inspect pragent/pr-agent:<version>-github_action --format '{{.Manifest.Digest}}'
+      - uses: docker://pragent/pr-agent:0.50.0-github_action@sha256:548e894a88071180832b2f4233f734d0acd0db1a879e2fcbaa70bac8b8372ebe
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
