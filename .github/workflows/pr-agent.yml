@@ -1,0 +1,114 @@
+name: PR Agent
+
+on:
+  pull_request:
+    types: [opened, reopened, ready_for_review]
+  issue_comment:
+    types: [created]
+
+permissions:
+  contents: read
+
+jobs:
+  authorize:
+    name: Authorize
+    # Cheap pre-filter only; the "Check permission" step below is the real gate.
+    if: >-
+      github.event.sender.type != 'Bot' && (
+        (
+          github.event_name == 'pull_request' &&
+          !github.event.pull_request.draft &&
+          contains(fromJSON('["OWNER", "MEMBER", "COLLABORATOR"]'), github.event.pull_request.author_association)
+        ) || (
+          github.event_name == 'issue_comment' &&
+          github.event.issue.pull_request &&
+          contains(fromJSON('["OWNER", "MEMBER", "COLLABORATOR"]'), github.event.comment.author_association) &&
+          startsWith(github.event.comment.body, '/')
+        )
+      )
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      allowed: ${{ steps.check.outputs.allowed }}
+
+    steps:
+      # Runs spend the GEMINI_API_KEY quota, so only users with write access may trigger them.
+      # author_association alone also admits read and triage collaborators.
+      - name: Check permission
+        id: check
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          if [[ "$GITHUB_EVENT_NAME" == "issue_comment" ]]; then
+            body=$(jq -r '.comment.body // ""' "$GITHUB_EVENT_PATH")
+            command=${body%%[[:space:]]*}
+            case "$command" in
+              /describe|/review|/improve|/ask|/help) ;;
+              *)
+                echo "::notice::Skipping: $command is not an enabled PR-Agent command"
+                echo "allowed=false" >> "$GITHUB_OUTPUT"
+                exit 0
+                ;;
+            esac
+            login=$(jq -r '.comment.user.login // ""' "$GITHUB_EVENT_PATH")
+          else
+            login=$(jq -r '.pull_request.user.login // ""' "$GITHUB_EVENT_PATH")
+          fi
+          role=$(gh api "repos/$GH_REPO/collaborators/$login/permission" --jq '.role_name' 2>/dev/null || echo none)
+          case "$role" in
+            admin|maintain|write)
+              echo "allowed=true" >> "$GITHUB_OUTPUT"
+              ;;
+            *)
+              echo "::notice::Skipping: $login does not have write access"
+              echo "allowed=false" >> "$GITHUB_OUTPUT"
+              ;;
+          esac
+
+  pr-agent:
+    name: PR Agent
+    needs: authorize
+    if: needs.authorize.outputs.allowed == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      issues: write
+      pull-requests: write
+    # Job-level, so events rejected above never join the group and cancel a queued command.
+    concurrency:
+      group: pr-agent-${{ github.event.pull_request.number || github.event.issue.number }}
+      cancel-in-progress: false
+
+    steps:
+      # Pinned by digest: the-pr-agent/pr-agent@<tag> only pins a wrapper whose Dockerfile
+      # pulls the rolling pragent/pr-agent:github_action image. To upgrade, resolve the new digest:
+      #   docker buildx imagetools inspect pragent/pr-agent:<version>-github_action --format '{{.Manifest.Digest}}'
+      - uses: docker://pragent/pr-agent:0.50.0-github_action@sha256:548e894a88071180832b2f4233f734d0acd0db1a879e2fcbaa70bac8b8372ebe
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+          # Model (Google AI Studio free tier). Quotas are per model, so the
+          # fallback keeps reviews working if 3.8 Flash hits its daily cap.
+          config.model: "gemini/gemini-3.8-flash"
+          config.fallback_models: '["gemini/gemini-3.6-flash"]'
+          # gemini-3.6-flash is not in PR-Agent's model table; this gives it a context
+          # size (still capped by max_model_tokens below).
+          config.custom_model_max_tokens: "1048576"
+          GOOGLE_AI_STUDIO.GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+
+          # Free-tier Flash can be slow under load: allow longer calls and less reasoning
+          config.ai_timeout: "300"
+          config.reasoning_effort: "low"
+
+          # Cost caps per model call
+          config.max_model_tokens: "32000"
+          config.max_output_tokens: "8192"
+
+          # Run review and describe automatically; /improve stays on-demand via comments
+          github_action_config.auto_review: "true"
+          github_action_config.auto_describe: "true"
+          github_action_config.auto_improve: "false"
+          github_action_config.pr_actions: '["opened", "reopened", "ready_for_review"]'
