@@ -9,7 +9,6 @@ import (
 var testClient *Client
 
 func TestMain(m *testing.M) {
-
 	err := initTestClient()
 	if err != nil {
 		log.Fatalf("failed to initialize test client: %v", err)

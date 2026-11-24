@@ -1,7 +1,6 @@
 package sleeper
 
 import (
-	"context"
 	"testing"
 )
 
@@ -40,7 +39,7 @@ func TestSportState_Get(t *testing.T) {
 
 	for _, tc := range tt {
 		t.Run(tc.testcase, func(t *testing.T) {
-			sportState, err := testClient.GetSportState(context.Background(), tc.sport)
+			sportState, err := testClient.GetSportState(t.Context(), tc.sport)
 			if err != nil {
 				if tc.shouldPass {
 					t.Errorf("unexpected error: %v", err)

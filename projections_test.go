@@ -1,7 +1,6 @@
 package sleeper
 
 import (
-	"context"
 	"testing"
 )
 
@@ -55,7 +54,7 @@ func TestProjections_List(t *testing.T) {
 
 	for _, tc := range tt {
 		t.Run(tc.testcase, func(t *testing.T) {
-			projections, err := testClient.ListProjections(context.Background(), tc.sport, tc.season, tc.options)
+			projections, err := testClient.ListProjections(t.Context(), tc.sport, tc.season, tc.options)
 			if err != nil {
 				if tc.shouldPass {
 					t.Errorf("unexpected error: %v", err)

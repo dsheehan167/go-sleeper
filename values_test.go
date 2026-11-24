@@ -1,7 +1,6 @@
 package sleeper
 
 import (
-	"context"
 	"testing"
 )
 
@@ -74,7 +73,7 @@ func TestPlayerValues_Get(t *testing.T) {
 
 	for _, tc := range tt {
 		t.Run(tc.testcase, func(t *testing.T) {
-			values, err := testClient.GetPlayerValues(context.Background(), tc.sport, tc.season, tc.format, tc.options)
+			values, err := testClient.GetPlayerValues(t.Context(), tc.sport, tc.season, tc.format, tc.options)
 			if err != nil {
 				if tc.shouldPass {
 					t.Errorf("unexpected error: %v", err)
