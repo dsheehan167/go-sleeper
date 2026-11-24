@@ -90,8 +90,15 @@ jobs:
           # Model (Google AI Studio free tier). Quotas are per model, so the
           # fallback keeps reviews working if 3.8 Flash hits its daily cap.
           config.model: "gemini/gemini-3.8-flash"
-          config.fallback_models: '["gemini/gemini-3.1-flash"]'
+          config.fallback_models: '["gemini/gemini-3.6-flash"]'
+          # gemini-3.6-flash is not in PR-Agent's model table; this gives it a context
+          # size (still capped by max_model_tokens below).
+          config.custom_model_max_tokens: "1048576"
           GOOGLE_AI_STUDIO.GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+
+          # Free-tier Flash can be slow under load: allow longer calls and less reasoning
+          config.ai_timeout: "300"
+          config.reasoning_effort: "low"
 
           # Cost caps per model call
           config.max_model_tokens: "32000"
