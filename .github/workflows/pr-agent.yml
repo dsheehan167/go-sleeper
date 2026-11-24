@@ -32,7 +32,7 @@ jobs:
       allowed: ${{ steps.check.outputs.allowed }}
 
     steps:
-      # The model is billed to ANTHROPIC_KEY, so only users with write access may trigger it.
+      # Runs spend the GEMINI_API_KEY quota, so only users with write access may trigger them.
       # author_association alone also admits read and triage collaborators.
       - name: Check permission
         id: check
@@ -87,10 +87,11 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-          # Model (Anthropic Claude via LiteLLM)
-          config.model: "anthropic/claude-opus-5-5"
-          config.fallback_models: '["anthropic/claude-sonnet-5-5"]'
-          ANTHROPIC.KEY: ${{ secrets.ANTHROPIC_KEY }}
+          # Model (Google AI Studio free tier). Quotas are per model, so the
+          # fallback keeps reviews working if 3.8 Flash hits its daily cap.
+          config.model: "gemini/gemini-3.8-flash"
+          config.fallback_models: '["gemini/gemini-3.1-flash"]'
+          GOOGLE_AI_STUDIO.GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
 
           # Cost caps per model call
           config.max_model_tokens: "32000"
