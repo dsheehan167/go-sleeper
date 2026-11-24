@@ -8,16 +8,79 @@ on:
 
 permissions:
   contents: read
-  issues: write
-  pull-requests: write
 
 jobs:
+  authorize:
+    name: Authorize
+    # Cheap pre-filter only; the "Check permission" step below is the real gate.
+    if: >-
+      github.event.sender.type != 'Bot' && (
+        (
+          github.event_name == 'pull_request' &&
+          !github.event.pull_request.draft &&
+          contains(fromJSON('["OWNER", "MEMBER", "COLLABORATOR"]'), github.event.pull_request.author_association)
+        ) || (
+          github.event_name == 'issue_comment' &&
+          github.event.issue.pull_request &&
+          contains(fromJSON('["OWNER", "MEMBER", "COLLABORATOR"]'), github.event.comment.author_association) &&
+          startsWith(github.event.comment.body, '/')
+        )
+      )
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      allowed: ${{ steps.check.outputs.allowed }}
+
+    steps:
+      # The model is billed to ANTHROPIC_KEY, so only users with write access may trigger it.
+      # author_association alone also admits read and triage collaborators.
+      - name: Check permission
+        id: check
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          if [[ "$GITHUB_EVENT_NAME" == "issue_comment" ]]; then
+            body=$(jq -r '.comment.body // ""' "$GITHUB_EVENT_PATH")
+            command=${body%%[[:space:]]*}
+            case "$command" in
+              /describe|/review|/improve|/ask|/help) ;;
+              *)
+                echo "::notice::Skipping: $command is not an enabled PR-Agent command"
+                echo "allowed=false" >> "$GITHUB_OUTPUT"
+                exit 0
+                ;;
+            esac
+            login=$(jq -r '.comment.user.login // ""' "$GITHUB_EVENT_PATH")
+          else
+            login=$(jq -r '.pull_request.user.login // ""' "$GITHUB_EVENT_PATH")
+          fi
+          role=$(gh api "repos/$GH_REPO/collaborators/$login/permission" --jq '.role_name' 2>/dev/null || echo none)
+          case "$role" in
+            admin|maintain|write)
+              echo "allowed=true" >> "$GITHUB_OUTPUT"
+              ;;
+            *)
+              echo "::notice::Skipping: $login does not have write access"
+              echo "allowed=false" >> "$GITHUB_OUTPUT"
+              ;;
+          esac
+
   pr-agent:
     name: PR Agent
-    # Skip bot events, and only handle comments made on pull requests (not plain issues).
-    if: ${{ github.event.sender.type != 'Bot' && (github.event_name == 'pull_request' || github.event.issue.pull_request) }}
+    needs: authorize
+    if: needs.authorize.outputs.allowed == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    permissions:
+      contents: read
+      issues: write
+      pull-requests: write
+    # Job-level, so events rejected above never join the group and cancel a queued command.
+    concurrency:
+      group: pr-agent-${{ github.event.pull_request.number || github.event.issue.number }}
+      cancel-in-progress: false
 
     steps:
       - uses: the-pr-agent/pr-agent@v0.50.0
@@ -28,6 +91,10 @@ jobs:
           config.model: "anthropic/claude-opus-5-5"
           config.fallback_models: '["anthropic/claude-sonnet-5-5"]'
           ANTHROPIC.KEY: ${{ secrets.ANTHROPIC_KEY }}
+
+          # Cost caps per model call
+          config.max_model_tokens: "32000"
+          config.max_output_tokens: "8192"
 
           # Run review and describe automatically; /improve stays on-demand via comments
           github_action_config.auto_review: "true"
