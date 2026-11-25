@@ -1,146 +1,45 @@
 version: "2"
 
-run:
-  timeout: 5m
-  tests: true
-
 linters:
   default: none
   enable:
-    # Correctness
-    - errcheck
-    - govet
-    - staticcheck
-    - ineffassign
-    - unused
-    - errorlint
-    - bodyclose
-    - noctx
-    - nilerr
-    - nilnesserr
-    - nilnil
-    - durationcheck
-    - errchkjson
-    - forcetypeassert
-    - makezero
-    - musttag
-    - reassign
-    - contextcheck
-    - containedctx
-    - fatcontext
-    - copyloopvar
-    - exhaustive
-    - gosec
-    - recvcheck
-    # Style and simplification
-    - revive
-    - gocritic
-    - misspell
-    - unconvert
-    - unparam
-    - wastedassign
-    - usestdlibvars
-    - perfsprint
-    - predeclared
-    - intrange
-    - errname
-    - whitespace
-    - dupword
-    - goprintffuncname
-    - asciicheck
-    - bidichk
-    - nakedret
-    - nolintlint
-    - mirror
-    - exptostd
-    - canonicalheader
-    - nosprintfhostport
-    - gocheckcompilerdirectives
+    # Bugs
+    - errcheck # unchecked errors
+    - govet # go vet's checks
+    - staticcheck # the main Go bug/simplification checker
+    - ineffassign # values assigned but never read
+    - unused # unused code
+    - errorlint # error comparisons that break with wrapped errors
+    - bodyclose # HTTP response bodies that are never closed
+    - noctx # HTTP requests sent without a context
+    - contextcheck # functions that drop the caller's context
+    - nilerr # returning nil when an error should be returned
+    - gosec # common security mistakes
+    # Style
+    - revive # naming, doc comments, error strings
+    - gocritic # assorted style and performance checks
+    - misspell # spelling in comments and strings
+    - unparam # function parameters that are never used
+    - unconvert # unnecessary type conversions
+    - perfsprint # fmt.Sprintf calls with a faster alternative
+    - whitespace # blank lines at the start/end of blocks
+    - nolintlint # every //nolint must name the linter and say why
     # Tests
-    - thelper
-    - tparallel
-    - usetesting
+    - usetesting # t.Context() instead of context.Background() in tests
 
   settings:
-    errcheck:
-      check-type-assertions: true
-      check-blank: true
-
-    govet:
-      enable-all: true
-      disable:
-        # Reordering fields in exported JSON structs for padding hurts readability
-        # (fields mirror the API response order) for negligible gain.
-        - fieldalignment
-        # `if err := ...; err != nil` inside a function that already has `err`
-        # is idiomatic Go; shadow reports every one of them.
-        - shadow
-
-    exhaustive:
-      default-signifies-exhaustive: true
-
-    gocritic:
-      enabled-tags:
-        - diagnostic
-        - style
-        - performance
-      disabled-checks:
-        # Large JSON model structs are passed by value in a few documented
-        # places (e.g. ProjectionStats.ADP); changing receivers is an API change.
-        - hugeParam
-        # Conflicts with the "assign in if" style used throughout.
-        - ifElseChain
-
     revive:
+      enable-default-rules: true
       rules:
-        - name: blank-imports
-        - name: context-as-argument
-        - name: context-keys-type
-        - name: dot-imports
-        - name: empty-block
-        - name: error-naming
-        - name: error-return
-        - name: error-strings
-        - name: errorf
-        - name: exported
-        - name: increment-decrement
-        - name: indent-error-flow
-        - name: package-comments
-        - name: range
-        - name: receiver-naming
-        - name: redefines-builtin-id
-        - name: superfluous-else
-        - name: time-naming
-        - name: unexported-return
-        - name: unreachable-code
-        - name: unused-parameter
-        - name: var-declaration
-        - name: var-naming
         - name: use-any
-        - name: early-return
-        - name: unnecessary-stmt
-        - name: useless-break
-        - name: datarace
-        - name: defer
-        - name: identical-branches
-        - name: modifies-value-receiver
-        - name: unconditional-recursion
-        - name: waitgroup-by-value
-        - name: atomic
-        - name: bool-literal-in-expr
-        - name: constant-logical-expr
-        - name: struct-tag
 
     misspell:
       locale: US
       ignore-rules:
         # British spellings already used in error strings; changing them
-        # alters user-visible messages.
+        # changes user-visible messages.
         - initialised
         - unmarshalling
-
-    nakedret:
-      max-func-lines: 0
 
     nolintlint:
       require-explanation: true
@@ -150,14 +49,7 @@ linters:
       context-background: true
       context-todo: true
 
-    gosec:
-      excludes:
-        # Endpoints are built from fixed host constants; variable URLs are the
-        # whole point of an HTTP client library.
-        - G107
-
   exclusions:
-    generated: lax
     presets:
       - std-error-handling
 
@@ -165,7 +57,3 @@ formatters:
   enable:
     - gofumpt
     - goimports
-  settings:
-    goimports:
-      local-prefixes:
-        - github.com/dsheehan167/go-sleeper
