@@ -87,6 +87,14 @@ func TestUnitRosterMetadata_Unmarshal(t *testing.T) {
 			nil,
 			false,
 		},
+		{
+			"out of range number in unknown key",
+			`{"record":"W","p_nick_1":1e999}`,
+			"",
+			"",
+			nil,
+			false,
+		},
 	}
 
 	for _, tc := range tt {
