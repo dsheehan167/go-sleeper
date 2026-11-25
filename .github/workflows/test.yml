@@ -7,8 +7,8 @@ on:
     branches: [main]
 
 jobs:
-  test:
-    name: Integration Tests
+  unit:
+    name: Unit Tests
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
@@ -32,5 +32,34 @@ jobs:
         with:
           version: v2.15.0
 
+      # Unit tests are named TestUnit* (in *_unit_test.go files) and only talk
+      # to local httptest servers, so they need no network access.
       - name: Test
-        run: go test -v -race -count=1 -timeout 60s ./...
+        run: go test -v -race -count=1 -timeout 60s -run '^TestUnit' -coverprofile=coverage.out ./...
+
+      - name: Coverage
+        run: go tool cover -func=coverage.out
+
+  integration:
+    name: Integration Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: true
+
+      - name: Verify dependencies
+        run: go mod verify
+
+      - name: Vet
+        run: go vet ./...
+
+      # Integration tests call the live Sleeper API.
+      - name: Test
+        run: go test -v -race -count=1 -timeout 60s -skip '^TestUnit' ./...
