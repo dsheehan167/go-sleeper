@@ -10,11 +10,18 @@ import (
 
 // User represents a Sleeper user/league member.
 type User struct {
-	Avatar      string `json:"avatar,omitempty"`
-	DisplayName string `json:"display_name,omitempty"`
-	IsBot       bool   `json:"is_bot"`
-	UserID      string `json:"user_id"`
-	Username    string `json:"username"`
+	Avatar      string        `json:"avatar,omitempty"`
+	DisplayName string        `json:"display_name,omitempty"`
+	IsBot       bool          `json:"is_bot"`
+	UserID      string        `json:"user_id"`
+	Username    string        `json:"username"`
+	Metadata    *UserMetadata `json:"metadata,omitempty"`
+}
+
+// UserMetadata contains the league-specific metadata for a user.
+// Only present on users fetched through GetLeagueUsers.
+type UserMetadata struct {
+	TeamName string `json:"team_name,omitempty"`
 }
 
 // GetUser retrieves a User by identity (username or user_id of the user).
