@@ -1,7 +1,6 @@
 package sleeper
 
 import (
-	"context"
 	"testing"
 )
 
@@ -40,7 +39,7 @@ func TestUser_Get(t *testing.T) {
 
 	for _, tc := range tt {
 		t.Run(tc.testcase, func(t *testing.T) {
-			user, err := testClient.GetUser(context.Background(), tc.identity)
+			user, err := testClient.GetUser(t.Context(), tc.identity)
 			if err != nil {
 				if tc.shouldPass {
 					t.Errorf("unexpected error: %v", err)
@@ -98,7 +97,7 @@ func TestUser_GetLeagues(t *testing.T) {
 
 	for _, tc := range tt {
 		t.Run(tc.testcase, func(t *testing.T) {
-			leagues, err := testClient.GetUserLeagues(context.Background(), tc.userID, tc.sport, tc.season)
+			leagues, err := testClient.GetUserLeagues(t.Context(), tc.userID, tc.sport, tc.season)
 			if err != nil {
 				if tc.shouldPass {
 					t.Errorf("unexpected error: %v", err)

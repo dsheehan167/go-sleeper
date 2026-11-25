@@ -1,7 +1,6 @@
 package sleeper
 
 import (
-	"context"
 	"testing"
 )
 
@@ -34,7 +33,7 @@ func TestLeague_Get(t *testing.T) {
 
 	for _, tc := range tt {
 		t.Run(tc.testcase, func(t *testing.T) {
-			league, err := testClient.GetLeague(context.Background(), tc.leagueID)
+			league, err := testClient.GetLeague(t.Context(), tc.leagueID)
 			if err != nil {
 				if tc.shouldPass {
 					t.Errorf("unexpected error: %v", err)
@@ -88,7 +87,7 @@ func TestLeague_GetRosters(t *testing.T) {
 
 	for _, tc := range tt {
 		t.Run(tc.testcase, func(t *testing.T) {
-			rosters, err := testClient.GetLeagueRosters(context.Background(), tc.leagueID)
+			rosters, err := testClient.GetLeagueRosters(t.Context(), tc.leagueID)
 			if err != nil {
 				if tc.shouldPass {
 					t.Errorf("unexpected error: %v", err)
@@ -142,7 +141,7 @@ func TestLeague_GetUsers(t *testing.T) {
 
 	for _, tc := range tt {
 		t.Run(tc.testcase, func(t *testing.T) {
-			users, err := testClient.GetLeagueUsers(context.Background(), tc.leagueID)
+			users, err := testClient.GetLeagueUsers(t.Context(), tc.leagueID)
 			if err != nil {
 				if tc.shouldPass {
 					t.Errorf("unexpected error: %v", err)
@@ -207,7 +206,7 @@ func TestLeague_GetMatchups(t *testing.T) {
 
 	for _, tc := range tt {
 		t.Run(tc.testcase, func(t *testing.T) {
-			matchups, err := testClient.GetLeagueMatchups(context.Background(), tc.leagueID, tc.week)
+			matchups, err := testClient.GetLeagueMatchups(t.Context(), tc.leagueID, tc.week)
 			if err != nil {
 				if tc.shouldPass {
 					t.Errorf("unexpected error: %v", err)
@@ -272,7 +271,7 @@ func TestLeague_GetTransactions(t *testing.T) {
 
 	for _, tc := range tt {
 		t.Run(tc.testcase, func(t *testing.T) {
-			transactions, err := testClient.GetTransactions(context.Background(), tc.leagueID, tc.week)
+			transactions, err := testClient.GetTransactions(t.Context(), tc.leagueID, tc.week)
 			if err != nil {
 				if tc.shouldPass {
 					t.Errorf("unexpected error: %v", err)
@@ -326,7 +325,7 @@ func TestLeague_GetTradedPicks(t *testing.T) {
 
 	for _, tc := range tt {
 		t.Run(tc.testcase, func(t *testing.T) {
-			picks, err := testClient.GetLeagueTradedPicks(context.Background(), tc.leagueID)
+			picks, err := testClient.GetLeagueTradedPicks(t.Context(), tc.leagueID)
 			if err != nil {
 				if tc.shouldPass {
 					t.Errorf("unexpected error: %v", err)
@@ -380,7 +379,7 @@ func TestLeague_GetWinnersBracket(t *testing.T) {
 
 	for _, tc := range tt {
 		t.Run(tc.testcase, func(t *testing.T) {
-			matchups, err := testClient.GetLeagueWinnersBracket(context.Background(), tc.leagueID)
+			matchups, err := testClient.GetLeagueWinnersBracket(t.Context(), tc.leagueID)
 			if err != nil {
 				if tc.shouldPass {
 					t.Errorf("unexpected error: %v", err)
@@ -434,7 +433,7 @@ func TestLeague_GetLosersBracket(t *testing.T) {
 
 	for _, tc := range tt {
 		t.Run(tc.testcase, func(t *testing.T) {
-			matchups, err := testClient.GetLeagueLosersBracket(context.Background(), tc.leagueID)
+			matchups, err := testClient.GetLeagueLosersBracket(t.Context(), tc.leagueID)
 			if err != nil {
 				if tc.shouldPass {
 					t.Errorf("unexpected error: %v", err)

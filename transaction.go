@@ -2,6 +2,7 @@ package sleeper
 
 type transactionType string
 
+// Transaction types reported in Transaction.Type.
 const (
 	TransactionTypeTrade     transactionType = "trade"
 	TransactionTypeWaiver    transactionType = "waiver"

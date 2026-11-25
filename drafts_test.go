@@ -1,7 +1,6 @@
 package sleeper
 
 import (
-	"context"
 	"testing"
 )
 
@@ -34,7 +33,7 @@ func TestDraft_Get(t *testing.T) {
 
 	for _, tc := range tt {
 		t.Run(tc.testcase, func(t *testing.T) {
-			draft, err := testClient.GetDraft(context.Background(), tc.draftID)
+			draft, err := testClient.GetDraft(t.Context(), tc.draftID)
 			if err != nil {
 				if tc.shouldPass {
 					t.Errorf("unexpected error: %v", err)
@@ -97,7 +96,7 @@ func TestDraft_UserDrafts(t *testing.T) {
 
 	for _, tc := range tt {
 		t.Run(tc.testcase, func(t *testing.T) {
-			drafts, err := testClient.GetUserDrafts(context.Background(), tc.userID, tc.sport, tc.season)
+			drafts, err := testClient.GetUserDrafts(t.Context(), tc.userID, tc.sport, tc.season)
 			if err != nil {
 				if tc.shouldPass {
 					t.Errorf("unexpected error: %v", err)
@@ -147,7 +146,7 @@ func TestDraft_LeagueDrafts(t *testing.T) {
 
 	for _, tc := range tt {
 		t.Run(tc.testcase, func(t *testing.T) {
-			drafts, err := testClient.GetLeagueDrafts(context.Background(), tc.leagueID)
+			drafts, err := testClient.GetLeagueDrafts(t.Context(), tc.leagueID)
 			if err != nil {
 				if tc.shouldPass {
 					t.Errorf("unexpected error: %v", err)
@@ -201,7 +200,7 @@ func TestDraft_Picks(t *testing.T) {
 
 	for _, tc := range tt {
 		t.Run(tc.testcase, func(t *testing.T) {
-			picks, err := testClient.GetDraftPicks(context.Background(), tc.draftID)
+			picks, err := testClient.GetDraftPicks(t.Context(), tc.draftID)
 			if err != nil {
 				if tc.shouldPass {
 					t.Errorf("unexpected error: %v", err)
@@ -255,7 +254,7 @@ func TestDraft_TradedPicks(t *testing.T) {
 
 	for _, tc := range tt {
 		t.Run(tc.testcase, func(t *testing.T) {
-			picks, err := testClient.GetDraftTradedPicks(context.Background(), tc.draftID)
+			picks, err := testClient.GetDraftTradedPicks(t.Context(), tc.draftID)
 			if err != nil {
 				if tc.shouldPass {
 					t.Errorf("unexpected error: %v", err)

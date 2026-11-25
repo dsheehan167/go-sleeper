@@ -2,6 +2,7 @@ package sleeper
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"strconv"
 )
@@ -9,6 +10,7 @@ import (
 // FlexibleString can unmarshal from either a string or int
 type FlexibleString string
 
+// UnmarshalJSON implements json.Unmarshaler, accepting a JSON string or integer.
 func (f *FlexibleString) UnmarshalJSON(data []byte) error {
 	// Try string first
 	var s string
@@ -20,11 +22,11 @@ func (f *FlexibleString) UnmarshalJSON(data []byte) error {
 	// Try int
 	var i int
 	if err := json.Unmarshal(data, &i); err == nil {
-		*f = FlexibleString(fmt.Sprintf("%d", i))
+		*f = FlexibleString(strconv.Itoa(i))
 		return nil
 	}
 
-	return fmt.Errorf("cannot unmarshal into FlexibleString")
+	return errors.New("cannot unmarshal into FlexibleString")
 }
 
 // String returns the string value

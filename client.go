@@ -13,6 +13,7 @@ import (
 
 type apiVersion string
 
+// APIVersion1 is version 1 of the Sleeper API and the default for Config.APIVersion.
 const (
 	APIVersion1 apiVersion = "v1"
 )
@@ -42,7 +43,10 @@ const (
 )
 
 // NewClient creates a new Client using the provided configuration.
-func NewClient(ctx context.Context, config Config) (*Client, error) {
+//
+// ctx is currently unused; it is part of the public signature so that
+// initialization can honor cancellation in future without an API break.
+func NewClient(ctx context.Context, config Config) (*Client, error) { //nolint:revive // ctx is reserved for future use; see doc comment.
 	if err := config.validate(); err != nil {
 		return nil, fmt.Errorf("invalid config: %w", err)
 	}

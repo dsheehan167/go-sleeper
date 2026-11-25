@@ -7,8 +7,10 @@ import (
 	"fmt"
 )
 
+// Sport identifies a sport supported by the Sleeper API.
 type Sport string
 
+// Sports supported by the Sleeper API.
 const (
 	SportNFL Sport = "nfl"
 	SportMLB Sport = "mlb"
@@ -16,6 +18,7 @@ const (
 	SportNHL Sport = "nhl"
 )
 
+// SportState describes the current season and week for a sport.
 type SportState struct {
 	Week               int            `json:"week,omitempty"`              // week
 	SeasonType         string         `json:"season_type,omitempty"`       // pre, post, regular
@@ -28,6 +31,8 @@ type SportState struct {
 	DisplayWeek        int            `json:"display_week,omitempty"`         // Which week to display in UI, can be different than week
 }
 
+// GetSportState retrieves the current state (season, week, season type) of a sport.
+// See: https://docs.sleeper.com/#get-nfl-state
 func (c *Client) GetSportState(ctx context.Context, sport Sport) (*SportState, error) {
 	if sport == "" {
 		return nil, errors.New("sport is required")

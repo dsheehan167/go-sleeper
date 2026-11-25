@@ -1,7 +1,6 @@
 package sleeper
 
 import (
-	"context"
 	"testing"
 )
 
@@ -18,7 +17,7 @@ func TestPlayer_List(t *testing.T) {
 
 	for _, tc := range tt {
 		t.Run(tc.testcase, func(t *testing.T) {
-			players, err := testClient.ListNFLPlayers(context.Background())
+			players, err := testClient.ListNFLPlayers(t.Context())
 			if err != nil {
 				if tc.shouldPass {
 					t.Errorf("unexpected error: %v", err)
@@ -111,7 +110,7 @@ func TestPlayer_ListTrending(t *testing.T) {
 
 	for _, tc := range tt {
 		t.Run(tc.testcase, func(t *testing.T) {
-			players, err := testClient.ListTrendingPlayers(context.Background(), tc.sport, tc.trendingType, tc.options)
+			players, err := testClient.ListTrendingPlayers(t.Context(), tc.sport, tc.trendingType, tc.options)
 			if err != nil {
 				if tc.shouldPass {
 					t.Errorf("unexpected error: %v", err)

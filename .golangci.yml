@@ -1,0 +1,59 @@
+version: "2"
+
+linters:
+  default: none
+  enable:
+    # Bugs
+    - errcheck # unchecked errors
+    - govet # go vet's checks
+    - staticcheck # the main Go bug/simplification checker
+    - ineffassign # values assigned but never read
+    - unused # unused code
+    - errorlint # error comparisons that break with wrapped errors
+    - bodyclose # HTTP response bodies that are never closed
+    - noctx # HTTP requests sent without a context
+    - contextcheck # functions that drop the caller's context
+    - nilerr # returning nil when an error should be returned
+    - gosec # common security mistakes
+    # Style
+    - revive # naming, doc comments, error strings
+    - gocritic # assorted style and performance checks
+    - misspell # spelling in comments and strings
+    - unparam # function parameters that are never used
+    - unconvert # unnecessary type conversions
+    - perfsprint # fmt.Sprintf calls with a faster alternative
+    - whitespace # blank lines at the start/end of blocks
+    - nolintlint # every //nolint must name the linter and say why
+    # Tests
+    - usetesting # t.Context() instead of context.Background() in tests
+
+  settings:
+    revive:
+      enable-default-rules: true
+      rules:
+        - name: use-any
+
+    misspell:
+      locale: US
+      ignore-rules:
+        # British spellings already used in error strings; changing them
+        # changes user-visible messages.
+        - initialised
+        - unmarshalling
+
+    nolintlint:
+      require-explanation: true
+      require-specific: true
+
+    usetesting:
+      context-background: true
+      context-todo: true
+
+  exclusions:
+    presets:
+      - std-error-handling
+
+formatters:
+  enable:
+    - gofumpt
+    - goimports

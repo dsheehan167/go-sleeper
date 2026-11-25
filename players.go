@@ -9,8 +9,10 @@ import (
 	"strings"
 )
 
+// TrendingType selects whether ListTrendingPlayers ranks players by adds or drops.
 type TrendingType string
 
+// Trending types accepted by ListTrendingPlayers.
 const (
 	TrendingTypeAdd  TrendingType = "add"
 	TrendingTypeDrop TrendingType = "drop"
@@ -73,11 +75,13 @@ type Player struct {
 	KalshiID      *string `json:"kalshi_id"`
 }
 
+// PlayerMetadata contains supplementary information about a player.
 type PlayerMetadata struct {
 	ChannelID  string `json:"channel_id"`
 	RookieYear string `json:"rookie_year"`
 }
 
+// TrendingPlayerOptions holds optional query parameters for ListTrendingPlayers.
 type TrendingPlayerOptions struct {
 	LookbackHours int `json:"lookback_hours,omitempty"` // Number of hours to look back for trending players (default: 24)
 	Limit         int `json:"limit,omitempty"`          // Maximum number of players to return (default: 10, max: 50)

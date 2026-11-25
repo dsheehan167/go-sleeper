@@ -49,7 +49,7 @@ const (
 	queryParamPosition      = "position[]"
 )
 
-func (c *Client) buildEndpoint(template string, args ...interface{}) string {
+func (c *Client) buildEndpoint(template string, args ...any) string {
 	return c.baseURL + fmt.Sprintf(template, args...)
 }
 

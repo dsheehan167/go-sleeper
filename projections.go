@@ -17,6 +17,7 @@ import (
 // 2023, 2024, or 2026 — so prefer the scoring-specific ADPTypeDynasty* types.
 type ADPType string
 
+// ADP types, one per league format reported by the projections endpoint.
 const (
 	ADPTypeStandard        ADPType = "adp_std"
 	ADPTypeHalfPPR         ADPType = "adp_half_ppr"
@@ -186,6 +187,7 @@ type PlayerProjection struct {
 	Date     string `json:"date,omitempty"`
 }
 
+// ProjectionOptions holds optional query parameters for ListProjections.
 type ProjectionOptions struct {
 	Positions  []string // Filters on fantasy_positions (case-sensitive): "QB", "RB", "WR", "TE", "K", "DEF", or IDP "DL", "LB", "DB". Empty returns every position, including non-fantasy ones.
 	SeasonType string   // "regular" (default), "pre", or "post"

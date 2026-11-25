@@ -12,6 +12,7 @@ import (
 // ScoringFormat selects the league format used to compute player values.
 type ScoringFormat string
 
+// Scoring formats accepted by GetPlayerValues.
 const (
 	ScoringFormatStandard        ScoringFormat = "std"
 	ScoringFormatHalfPPR         ScoringFormat = "half_ppr"
@@ -24,6 +25,7 @@ const (
 	ScoringFormatIDP             ScoringFormat = "idp"
 )
 
+// PlayerValuesOptions holds optional query parameters for GetPlayerValues.
 type PlayerValuesOptions struct {
 	IncludeIDP bool // Include defensive (IDP) players in the response
 	IsDynasty  bool // Sent as is_dynasty to match the Sleeper app, but the server ignores it; dynasty values are selected via the dynasty_* formats

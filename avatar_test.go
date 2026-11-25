@@ -2,7 +2,6 @@ package sleeper
 
 import (
 	"bytes"
-	"context"
 	"os"
 	"path/filepath"
 	"testing"
@@ -35,7 +34,7 @@ func TestGetAvatarImage(t *testing.T) {
 		},
 	}
 
-	ctx := context.Background()
+	ctx := t.Context()
 
 	for _, tc := range tt {
 		t.Run(tc.testcase, func(t *testing.T) {
@@ -63,6 +62,7 @@ func TestGetAvatarImage(t *testing.T) {
 		})
 	}
 }
+
 func TestGetAvatarThumbnail(t *testing.T) {
 	// Load expected thumbnail data
 	expectedData, err := os.ReadFile(filepath.Join("test", "avatarThumbnail.png"))
@@ -90,7 +90,7 @@ func TestGetAvatarThumbnail(t *testing.T) {
 		},
 	}
 
-	ctx := context.Background()
+	ctx := t.Context()
 
 	for _, tc := range tt {
 		t.Run(tc.testcase, func(t *testing.T) {

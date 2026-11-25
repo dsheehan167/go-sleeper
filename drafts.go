@@ -82,7 +82,7 @@ type DraftSettings struct {
 type DraftPick struct {
 	DraftID   string              `json:"draft_id"`
 	DraftSlot int                 `json:"draft_slot"`
-	IsKeeper  interface{}         `json:"is_keeper"`
+	IsKeeper  any                 `json:"is_keeper"`
 	Metadata  *DraftPickMetadata  `json:"metadata"`
 	PickNo    int                 `json:"pick_no"`
 	PickedBy  string              `json:"picked_by"`
