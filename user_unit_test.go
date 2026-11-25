@@ -1,7 +1,6 @@
 package sleeper
 
 import (
-	"context"
 	"net/http"
 	"strings"
 	"testing"
@@ -114,7 +113,7 @@ func TestUnitUser_Get(t *testing.T) {
 		t.Run(tc.testcase, func(t *testing.T) {
 			client := newUnitTestClient(t, Config{}, respond(t, tc.wantPath, tc.status, tc.body))
 
-			user, err := client.GetUser(context.Background(), tc.identity)
+			user, err := client.GetUser(t.Context(), tc.identity)
 			if err != nil {
 				if tc.shouldPass {
 					t.Errorf("unexpected error: %v", err)
@@ -255,7 +254,7 @@ func TestUnitUser_GetLeagues(t *testing.T) {
 		t.Run(tc.testcase, func(t *testing.T) {
 			client := newUnitTestClient(t, Config{}, respond(t, tc.wantPath, tc.status, tc.body))
 
-			leagues, err := client.GetUserLeagues(context.Background(), tc.userID, tc.sport, tc.season)
+			leagues, err := client.GetUserLeagues(t.Context(), tc.userID, tc.sport, tc.season)
 			if err != nil {
 				if tc.shouldPass {
 					t.Errorf("unexpected error: %v", err)

@@ -1,7 +1,6 @@
 package sleeper
 
 import (
-	"context"
 	"net/http"
 	"strings"
 	"testing"
@@ -84,7 +83,7 @@ func TestUnitLeague_Get(t *testing.T) {
 		t.Run(tc.testcase, func(t *testing.T) {
 			client := newUnitTestClient(t, Config{}, respond(t, tc.wantPath, tc.status, tc.body))
 
-			league, err := client.GetLeague(context.Background(), tc.leagueID)
+			league, err := client.GetLeague(t.Context(), tc.leagueID)
 			if err != nil {
 				if tc.shouldPass {
 					t.Errorf("unexpected error: %v", err)
@@ -199,7 +198,7 @@ func TestUnitLeague_GetMatchups(t *testing.T) {
 		t.Run(tc.testcase, func(t *testing.T) {
 			client := newUnitTestClient(t, Config{}, respond(t, tc.wantPath, tc.status, tc.body))
 
-			matchups, err := client.GetLeagueMatchups(context.Background(), tc.leagueID, tc.week)
+			matchups, err := client.GetLeagueMatchups(t.Context(), tc.leagueID, tc.week)
 			if err != nil {
 				if tc.shouldPass {
 					t.Errorf("unexpected error: %v", err)
@@ -309,7 +308,7 @@ func TestUnitLeague_GetTransactions(t *testing.T) {
 		t.Run(tc.testcase, func(t *testing.T) {
 			client := newUnitTestClient(t, Config{}, respond(t, tc.wantPath, tc.status, tc.body))
 
-			transactions, err := client.GetTransactions(context.Background(), tc.leagueID, tc.week)
+			transactions, err := client.GetTransactions(t.Context(), tc.leagueID, tc.week)
 			if err != nil {
 				if tc.shouldPass {
 					t.Errorf("unexpected error: %v", err)
@@ -432,7 +431,7 @@ func TestUnitLeague_GetRosters(t *testing.T) {
 		t.Run(tc.testcase, func(t *testing.T) {
 			client := newUnitTestClient(t, Config{}, respond(t, tc.wantPath, tc.status, tc.body))
 
-			results, err := client.GetLeagueRosters(context.Background(), tc.leagueID)
+			results, err := client.GetLeagueRosters(t.Context(), tc.leagueID)
 			if err != nil {
 				if tc.shouldPass {
 					t.Errorf("unexpected error: %v", err)
@@ -555,7 +554,7 @@ func TestUnitLeague_GetUsers(t *testing.T) {
 		t.Run(tc.testcase, func(t *testing.T) {
 			client := newUnitTestClient(t, Config{}, respond(t, tc.wantPath, tc.status, tc.body))
 
-			results, err := client.GetLeagueUsers(context.Background(), tc.leagueID)
+			results, err := client.GetLeagueUsers(t.Context(), tc.leagueID)
 			if err != nil {
 				if tc.shouldPass {
 					t.Errorf("unexpected error: %v", err)
@@ -678,7 +677,7 @@ func TestUnitLeague_GetTradedPicks(t *testing.T) {
 		t.Run(tc.testcase, func(t *testing.T) {
 			client := newUnitTestClient(t, Config{}, respond(t, tc.wantPath, tc.status, tc.body))
 
-			results, err := client.GetLeagueTradedPicks(context.Background(), tc.leagueID)
+			results, err := client.GetLeagueTradedPicks(t.Context(), tc.leagueID)
 			if err != nil {
 				if tc.shouldPass {
 					t.Errorf("unexpected error: %v", err)
@@ -801,7 +800,7 @@ func TestUnitLeague_GetWinnersBracket(t *testing.T) {
 		t.Run(tc.testcase, func(t *testing.T) {
 			client := newUnitTestClient(t, Config{}, respond(t, tc.wantPath, tc.status, tc.body))
 
-			results, err := client.GetLeagueWinnersBracket(context.Background(), tc.leagueID)
+			results, err := client.GetLeagueWinnersBracket(t.Context(), tc.leagueID)
 			if err != nil {
 				if tc.shouldPass {
 					t.Errorf("unexpected error: %v", err)
@@ -924,7 +923,7 @@ func TestUnitLeague_GetLosersBracket(t *testing.T) {
 		t.Run(tc.testcase, func(t *testing.T) {
 			client := newUnitTestClient(t, Config{}, respond(t, tc.wantPath, tc.status, tc.body))
 
-			results, err := client.GetLeagueLosersBracket(context.Background(), tc.leagueID)
+			results, err := client.GetLeagueLosersBracket(t.Context(), tc.leagueID)
 			if err != nil {
 				if tc.shouldPass {
 					t.Errorf("unexpected error: %v", err)

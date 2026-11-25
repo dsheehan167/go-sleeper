@@ -32,7 +32,7 @@ func TestUnitClient_GetRequest(t *testing.T) {
 	}{
 		{
 			"200 returns body",
-			func(w http.ResponseWriter, r *http.Request) {
+			func(w http.ResponseWriter, _ *http.Request) {
 				_, _ = io.WriteString(w, `{"ok":true}`)
 			},
 			`{"ok":true}`,
@@ -42,7 +42,7 @@ func TestUnitClient_GetRequest(t *testing.T) {
 		},
 		{
 			"201 is treated as success",
-			func(w http.ResponseWriter, r *http.Request) {
+			func(w http.ResponseWriter, _ *http.Request) {
 				w.WriteHeader(http.StatusCreated)
 				_, _ = io.WriteString(w, `created`)
 			},
@@ -53,7 +53,7 @@ func TestUnitClient_GetRequest(t *testing.T) {
 		},
 		{
 			"204 returns empty body",
-			func(w http.ResponseWriter, r *http.Request) {
+			func(w http.ResponseWriter, _ *http.Request) {
 				w.WriteHeader(http.StatusNoContent)
 			},
 			"",
@@ -63,7 +63,7 @@ func TestUnitClient_GetRequest(t *testing.T) {
 		},
 		{
 			"304 is an api error",
-			func(w http.ResponseWriter, r *http.Request) {
+			func(w http.ResponseWriter, _ *http.Request) {
 				w.WriteHeader(http.StatusNotModified)
 			},
 			"",
@@ -73,7 +73,7 @@ func TestUnitClient_GetRequest(t *testing.T) {
 		},
 		{
 			"400 is an api error",
-			func(w http.ResponseWriter, r *http.Request) {
+			func(w http.ResponseWriter, _ *http.Request) {
 				w.WriteHeader(http.StatusBadRequest)
 			},
 			"",
@@ -83,7 +83,7 @@ func TestUnitClient_GetRequest(t *testing.T) {
 		},
 		{
 			"404 is an api error",
-			func(w http.ResponseWriter, r *http.Request) {
+			func(w http.ResponseWriter, _ *http.Request) {
 				w.WriteHeader(http.StatusNotFound)
 			},
 			"",
@@ -93,7 +93,7 @@ func TestUnitClient_GetRequest(t *testing.T) {
 		},
 		{
 			"429 is an api error",
-			func(w http.ResponseWriter, r *http.Request) {
+			func(w http.ResponseWriter, _ *http.Request) {
 				w.WriteHeader(http.StatusTooManyRequests)
 			},
 			"",
@@ -103,7 +103,7 @@ func TestUnitClient_GetRequest(t *testing.T) {
 		},
 		{
 			"500 is an api error",
-			func(w http.ResponseWriter, r *http.Request) {
+			func(w http.ResponseWriter, _ *http.Request) {
 				w.WriteHeader(http.StatusInternalServerError)
 				_, _ = io.WriteString(w, `{"error":"boom"}`)
 			},
@@ -114,7 +114,7 @@ func TestUnitClient_GetRequest(t *testing.T) {
 		},
 		{
 			"truncated body is a read error",
-			func(w http.ResponseWriter, r *http.Request) {
+			func(w http.ResponseWriter, _ *http.Request) {
 				w.Header().Set("Content-Length", "100")
 				_, _ = io.WriteString(w, `{"partial"`)
 			},
@@ -129,7 +129,7 @@ func TestUnitClient_GetRequest(t *testing.T) {
 		t.Run(tc.testcase, func(t *testing.T) {
 			client := newUnitTestClient(t, Config{}, tc.handler)
 
-			by, err := client.getRequest(context.Background(), client.baseURL+"/test")
+			by, err := client.getRequest(t.Context(), client.baseURL+"/test")
 			if err != nil {
 				if tc.shouldPass {
 					t.Errorf("unexpected error: %v", err)
@@ -176,7 +176,7 @@ func TestUnitClient_GetRequestSetup(t *testing.T) {
 	}{
 		{
 			"nil http client",
-			func(t *testing.T) (*Client, string) {
+			func(_ *testing.T) (*Client, string) {
 				return &Client{}, "/test"
 			},
 			"http client is not initialised",
@@ -207,7 +207,7 @@ func TestUnitClient_GetRequestSetup(t *testing.T) {
 		t.Run(tc.testcase, func(t *testing.T) {
 			client, endpoint := tc.setup(t)
 
-			by, err := client.getRequest(context.Background(), endpoint)
+			by, err := client.getRequest(t.Context(), endpoint)
 			if err != nil {
 				if tc.shouldPass {
 					t.Errorf("unexpected error: %v", err)
@@ -239,10 +239,10 @@ func TestUnitClient_GetRequestCancellation(t *testing.T) {
 		shouldPass    bool
 	}{
 		{
-			"context cancelled before request",
+			"context canceled before request",
 			0,
 			func() (context.Context, context.CancelFunc) {
-				ctx, cancel := context.WithCancel(context.Background())
+				ctx, cancel := context.WithCancel(t.Context())
 				cancel()
 				return ctx, cancel
 			},
@@ -252,10 +252,10 @@ func TestUnitClient_GetRequestCancellation(t *testing.T) {
 			false,
 		},
 		{
-			"context cancelled during request",
+			"context canceled during request",
 			0,
 			func() (context.Context, context.CancelFunc) {
-				ctx, cancel := context.WithCancel(context.Background())
+				ctx, cancel := context.WithCancel(t.Context())
 				time.AfterFunc(50*time.Millisecond, cancel)
 				return ctx, cancel
 			},
@@ -268,7 +268,7 @@ func TestUnitClient_GetRequestCancellation(t *testing.T) {
 			"context deadline exceeded during request",
 			0,
 			func() (context.Context, context.CancelFunc) {
-				return context.WithTimeout(context.Background(), 50*time.Millisecond)
+				return context.WithTimeout(t.Context(), 50*time.Millisecond)
 			},
 			blockUntilDone,
 			context.DeadlineExceeded,
@@ -279,7 +279,7 @@ func TestUnitClient_GetRequestCancellation(t *testing.T) {
 			"http client timeout",
 			50 * time.Millisecond,
 			func() (context.Context, context.CancelFunc) {
-				return context.WithCancel(context.Background())
+				return context.WithCancel(t.Context())
 			},
 			blockUntilDone,
 			context.DeadlineExceeded,
@@ -290,9 +290,9 @@ func TestUnitClient_GetRequestCancellation(t *testing.T) {
 			"response within deadline",
 			time.Second,
 			func() (context.Context, context.CancelFunc) {
-				return context.WithTimeout(context.Background(), time.Second)
+				return context.WithTimeout(t.Context(), time.Second)
 			},
-			func(w http.ResponseWriter, r *http.Request) {
+			func(w http.ResponseWriter, _ *http.Request) {
 				_, _ = io.WriteString(w, `{}`)
 			},
 			nil,
@@ -394,7 +394,7 @@ func TestUnitClient_RateLimit(t *testing.T) {
 	for _, tc := range tt {
 		t.Run(tc.testcase, func(t *testing.T) {
 			var served atomic.Int32
-			client := newUnitTestClient(t, tc.config, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			client := newUnitTestClient(t, tc.config, http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 				served.Add(1)
 				_, _ = io.WriteString(w, `{}`)
 			}))
@@ -402,9 +402,9 @@ func TestUnitClient_RateLimit(t *testing.T) {
 			start := time.Now()
 			var err error
 			for i := range tc.requests {
-				ctx, cancel := context.Background(), context.CancelFunc(func() {})
+				ctx, cancel := t.Context(), context.CancelFunc(func() {})
 				if i == tc.requests-1 && tc.lastTimeout > 0 {
-					ctx, cancel = context.WithTimeout(context.Background(), tc.lastTimeout)
+					ctx, cancel = context.WithTimeout(t.Context(), tc.lastTimeout)
 				}
 				_, err = client.getRequest(ctx, client.baseURL+"/limited")
 				cancel()

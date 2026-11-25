@@ -1,7 +1,6 @@
 package sleeper
 
 import (
-	"context"
 	"fmt"
 	"io"
 	"net/http"
@@ -70,7 +69,7 @@ func newUnitTestClientForServer(t *testing.T, config Config, srv *httptest.Serve
 
 	t.Cleanup(srv.Close)
 
-	client, err := NewClient(context.Background(), config)
+	client, err := NewClient(t.Context(), config)
 	if err != nil {
 		t.Fatalf("creating client: %v", err)
 	}

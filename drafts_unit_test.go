@@ -1,7 +1,6 @@
 package sleeper
 
 import (
-	"context"
 	"net/http"
 	"strings"
 	"testing"
@@ -74,7 +73,7 @@ func TestUnitDraft_Get(t *testing.T) {
 		t.Run(tc.testcase, func(t *testing.T) {
 			client := newUnitTestClient(t, Config{}, respond(t, tc.wantPath, tc.status, tc.body))
 
-			draft, err := client.GetDraft(context.Background(), tc.draftID)
+			draft, err := client.GetDraft(t.Context(), tc.draftID)
 			if err != nil {
 				if tc.shouldPass {
 					t.Errorf("unexpected error: %v", err)
@@ -196,7 +195,7 @@ func TestUnitDraft_UserDrafts(t *testing.T) {
 		t.Run(tc.testcase, func(t *testing.T) {
 			client := newUnitTestClient(t, Config{}, respond(t, tc.wantPath, tc.status, tc.body))
 
-			drafts, err := client.GetUserDrafts(context.Background(), tc.userID, tc.sport, tc.season)
+			drafts, err := client.GetUserDrafts(t.Context(), tc.userID, tc.sport, tc.season)
 			if err != nil {
 				if tc.shouldPass {
 					t.Errorf("unexpected error: %v", err)
@@ -319,7 +318,7 @@ func TestUnitDraft_LeagueDrafts(t *testing.T) {
 		t.Run(tc.testcase, func(t *testing.T) {
 			client := newUnitTestClient(t, Config{}, respond(t, tc.wantPath, tc.status, tc.body))
 
-			results, err := client.GetLeagueDrafts(context.Background(), tc.leagueID)
+			results, err := client.GetLeagueDrafts(t.Context(), tc.leagueID)
 			if err != nil {
 				if tc.shouldPass {
 					t.Errorf("unexpected error: %v", err)
@@ -442,7 +441,7 @@ func TestUnitDraft_TradedPicks(t *testing.T) {
 		t.Run(tc.testcase, func(t *testing.T) {
 			client := newUnitTestClient(t, Config{}, respond(t, tc.wantPath, tc.status, tc.body))
 
-			results, err := client.GetDraftTradedPicks(context.Background(), tc.draftID)
+			results, err := client.GetDraftTradedPicks(t.Context(), tc.draftID)
 			if err != nil {
 				if tc.shouldPass {
 					t.Errorf("unexpected error: %v", err)
@@ -565,7 +564,7 @@ func TestUnitDraft_Picks(t *testing.T) {
 		t.Run(tc.testcase, func(t *testing.T) {
 			client := newUnitTestClient(t, Config{}, respond(t, tc.wantPath, tc.status, tc.body))
 
-			results, err := client.GetDraftPicks(context.Background(), tc.draftID)
+			results, err := client.GetDraftPicks(t.Context(), tc.draftID)
 			if err != nil {
 				if tc.shouldPass {
 					t.Errorf("unexpected error: %v", err)

@@ -6,7 +6,7 @@ func TestUnitEndpoint_Build(t *testing.T) {
 	tt := []struct {
 		testcase string
 		template string
-		args     []interface{}
+		args     []any
 		expected string
 	}{
 		{
@@ -18,19 +18,19 @@ func TestUnitEndpoint_Build(t *testing.T) {
 		{
 			"string arg",
 			endpointUser,
-			[]interface{}{"sleeperuser"},
+			[]any{"sleeperuser"},
 			"https://api.sleeper.app/v1/user/sleeperuser",
 		},
 		{
 			"string and int args",
 			endpointLeagueMatchups,
-			[]interface{}{"123", 4},
+			[]any{"123", 4},
 			"https://api.sleeper.app/v1/league/123/matchups/4",
 		},
 		{
 			"typed string args",
 			endpointUserLeagues,
-			[]interface{}{"42", SportNFL, "2024"},
+			[]any{"42", SportNFL, "2024"},
 			"https://api.sleeper.app/v1/user/42/leagues/nfl/2024",
 		},
 	}

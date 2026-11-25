@@ -1,7 +1,6 @@
 package sleeper
 
 import (
-	"context"
 	"net/http"
 	"strings"
 	"testing"
@@ -112,7 +111,7 @@ func TestUnitProjections_List(t *testing.T) {
 		t.Run(tc.testcase, func(t *testing.T) {
 			client := newUnitTestClient(t, Config{}, respondExact(t, "api.sleeper.com", tc.wantPath, tc.wantQuery, tc.status, tc.body))
 
-			projections, err := client.ListProjections(context.Background(), tc.sport, tc.season, tc.options)
+			projections, err := client.ListProjections(t.Context(), tc.sport, tc.season, tc.options)
 			if err != nil {
 				if tc.shouldPass {
 					t.Errorf("unexpected error: %v", err)

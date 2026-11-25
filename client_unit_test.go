@@ -1,7 +1,6 @@
 package sleeper
 
 import (
-	"context"
 	"strings"
 	"testing"
 	"time"
@@ -181,7 +180,7 @@ func TestUnitClient_New(t *testing.T) {
 
 	for _, tc := range tt {
 		t.Run(tc.testcase, func(t *testing.T) {
-			client, err := NewClient(context.Background(), tc.config)
+			client, err := NewClient(t.Context(), tc.config)
 			if err != nil {
 				if tc.shouldPass {
 					t.Errorf("unexpected error: %v", err)

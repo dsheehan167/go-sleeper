@@ -1,7 +1,6 @@
 package sleeper
 
 import (
-	"context"
 	"net/http"
 	"strings"
 	"testing"
@@ -102,7 +101,7 @@ func TestUnitSportState_Get(t *testing.T) {
 		t.Run(tc.testcase, func(t *testing.T) {
 			client := newUnitTestClient(t, Config{}, respond(t, tc.wantPath, tc.status, tc.body))
 
-			state, err := client.GetSportState(context.Background(), tc.sport)
+			state, err := client.GetSportState(t.Context(), tc.sport)
 			if err != nil {
 				if tc.shouldPass {
 					t.Errorf("unexpected error: %v", err)

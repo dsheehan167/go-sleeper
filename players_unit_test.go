@@ -1,7 +1,6 @@
 package sleeper
 
 import (
-	"context"
 	"net/http"
 	"strings"
 	"testing"
@@ -62,7 +61,7 @@ func TestUnitPlayer_List(t *testing.T) {
 		t.Run(tc.testcase, func(t *testing.T) {
 			client := newUnitTestClient(t, Config{}, respond(t, "/v1/players/nfl", tc.status, tc.body))
 
-			players, err := client.ListNFLPlayers(context.Background())
+			players, err := client.ListNFLPlayers(t.Context())
 			if err != nil {
 				if tc.shouldPass {
 					t.Errorf("unexpected error: %v", err)
@@ -238,7 +237,7 @@ func TestUnitPlayer_ListTrending(t *testing.T) {
 		t.Run(tc.testcase, func(t *testing.T) {
 			client := newUnitTestClient(t, Config{}, respondExact(t, "", tc.wantPath, tc.wantQuery, tc.status, tc.body))
 
-			players, err := client.ListTrendingPlayers(context.Background(), tc.sport, tc.trendingType, tc.options)
+			players, err := client.ListTrendingPlayers(t.Context(), tc.sport, tc.trendingType, tc.options)
 			if err != nil {
 				if tc.shouldPass {
 					t.Errorf("unexpected error: %v", err)

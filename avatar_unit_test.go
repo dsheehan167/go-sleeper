@@ -1,7 +1,6 @@
 package sleeper
 
 import (
-	"context"
 	"net/http"
 	"strings"
 	"testing"
@@ -70,7 +69,7 @@ func TestUnitAvatar_GetImage(t *testing.T) {
 		t.Run(tc.testcase, func(t *testing.T) {
 			client := newUnitTestClient(t, Config{}, respondExact(t, "sleepercdn.com", tc.wantPath, "", tc.status, tc.body))
 
-			image, err := client.GetAvatarImage(context.Background(), tc.avatarID)
+			image, err := client.GetAvatarImage(t.Context(), tc.avatarID)
 			if err != nil {
 				if tc.shouldPass {
 					t.Errorf("unexpected error: %v", err)
@@ -148,7 +147,7 @@ func TestUnitAvatar_GetThumbnail(t *testing.T) {
 		t.Run(tc.testcase, func(t *testing.T) {
 			client := newUnitTestClient(t, Config{}, respondExact(t, "sleepercdn.com", tc.wantPath, "", tc.status, tc.body))
 
-			thumbnail, err := client.GetAvatarThumbnail(context.Background(), tc.avatarID)
+			thumbnail, err := client.GetAvatarThumbnail(t.Context(), tc.avatarID)
 			if err != nil {
 				if tc.shouldPass {
 					t.Errorf("unexpected error: %v", err)
